@@ -1,50 +1,46 @@
-import com.sun.javafx.geom.Vec2d
-import javafx.scene.effect.DropShadow
-import javafx.scene.effect.Shadow
+import javafx.scene.CacheHint
 import javafx.scene.input.MouseEvent
-import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 import kotlin.math.abs
 
-const val RADIUS = 20.0
-const val FRICTION = 0.6
-const val RESTITUTION = 0.6
+const val RADIUS = 28.0
+const val FRICTION = 0.98
+const val RESTITUTION = 0.4
 
 fun Double.sq() = this * this
 
-class Checker(x: Double = 0.0, y: Double = 0.0) : Circle(RADIUS) {
+class Checker(var isOwn: Boolean = true, x: Double = 0.0, y: Double = 0.0) : Circle(RADIUS) {
     val pos = Vector2d(x, y)
     val vel = Vector2d()
     val acc = Vector2d()
     val mass: Double = 10.0
 
     init {
-        fill = Color.DARKGREY
-        effect = DropShadow(3.0, Color.BLUE)
+        if (isOwn) styleClass.add("own")
+        else styleClass.add("mate")
+        isCache = true
+        cacheHint = CacheHint.SPEED
         setOnMouseClicked { event: MouseEvent ->
-            vel.x = (pos.x - event.x) * 100
-            vel.y = (pos.y - event.y) * 100
+            vel.x = (pos.x - event.x) * 400
+            vel.y = (pos.y - event.y) * 400
         }
         syncPos()
     }
 
-    fun onUpdate(elapsedMs: Double, width: Double, height: Double) {
+    fun onUpdate(elapsedMs: Double, bounds: Rect) {
         //acc.set(vel * FRICTION)
         //vel += acc * elapsedMs
         pos += vel * (elapsedMs / 1000)
-        if (vel.x > 0.01) vel.x -= FRICTION
-        else if (vel.x < 0.01) vel.x += FRICTION
-        if (vel.y > 0.01) vel.y -= FRICTION
-        else if (vel.y < 0.01) vel.y += FRICTION
+        if (vel.x > 0.01) vel.x *= FRICTION
+        else if (vel.x < 0.01) vel.x *= FRICTION
+        if (vel.y > 0.01) vel.y *= FRICTION
+        else if (vel.y < 0.01) vel.y *= FRICTION
 
-
-        when {
-            pos.x - RADIUS <= 0 || pos.x + RADIUS >= width -> {
-                acc.x = -acc.x; vel.x = -vel.x * 0.9
-            }
-            pos.y - RADIUS <= 0 || pos.y + RADIUS >= height -> {
-                acc.y = -acc.y; vel.y = -vel.y * 0.9
-            }
+        if (pos.x - RADIUS <= bounds.left || pos.x + RADIUS >= bounds.right) {
+            acc.x = -acc.x; vel.x = -vel.x * 0.9
+        }
+        if (pos.y - RADIUS <= bounds.top || pos.y + RADIUS >= bounds.bottom) {
+            acc.y = -acc.y; vel.y = -vel.y * 0.9
         }
 
         if (vel.length() < 0.01) {

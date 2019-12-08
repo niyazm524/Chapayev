@@ -1,21 +1,26 @@
 package app
 
-import javafx.scene.text.FontWeight
-import tornadofx.Stylesheet
-import tornadofx.box
-import tornadofx.cssclass
-import tornadofx.px
+import javafx.scene.effect.InnerShadow
+import javafx.scene.paint.Color
+import tornadofx.*
 
 class Styles : Stylesheet() {
     companion object {
-        val heading by cssclass()
+        val own by cssclass()
+        val mate by cssclass()
     }
 
     init {
-        label and heading {
-            padding = box(10.px)
-            fontSize = 20.px
-            fontWeight = FontWeight.BOLD
+        own {
+            fill = Color.DARKRED
+            effect = InnerShadow(18.0, Color.WHITE)
+            stroke = Color.GRAY
+        }
+
+        mate {
+            fill = Color.DARKBLUE
+            effect = InnerShadow(18.0, Color.WHITE)
+            stroke = Color.GRAY
         }
     }
 }
