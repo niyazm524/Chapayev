@@ -1,3 +1,5 @@
+package geometry
+
 import kotlin.math.sqrt
 
 data class Vector2d(var x: Double = 0.0, var y: Double = 0.0) {

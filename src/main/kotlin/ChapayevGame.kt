@@ -1,11 +1,9 @@
 import core.Game
-import javafx.scene.CacheHint
-import javafx.scene.effect.DropShadow
-import javafx.scene.image.Image
+import geometry.Rect
 import javafx.scene.layout.Pane
-import javafx.scene.paint.Color
-import javafx.scene.paint.ImagePattern
-import javafx.scene.shape.Rectangle
+import shapes.Board
+import shapes.Checker
+import shapes.Checker.Companion.RADIUS
 
 class ChapayevGame(root: Pane) : Game {
     val width = root.prefWidth
@@ -14,20 +12,7 @@ class ChapayevGame(root: Pane) : Game {
     private val bounds = Rect(width / 2 - SIZE / 2, height / 2 - SIZE / 2,
             width / 2 + SIZE / 2, height / 2 + SIZE / 2)
     private val checkers = mutableListOf<Checker>()
-    private val platform = Rectangle().apply {
-        width = SIZE
-        height = SIZE
-        x = bounds.left
-        y = bounds.top
-        fill = ImagePattern(
-                Image("/checkered.jpg"),
-                x, y, 260.0, 260.0,
-                false
-        )
-        effect = DropShadow(12.0, Color.GREY)
-        isCache = true
-        cacheHint = CacheHint.SPEED
-    }
+    private val board = Board(bounds)
 
 
     init {
@@ -42,7 +27,7 @@ class ChapayevGame(root: Pane) : Game {
                     bounds.top + margin + RADIUS
             ))
         }
-        root.children.add(platform)
+        root.children.add(board)
         root.children.addAll(checkers)
     }
 

@@ -1,13 +1,13 @@
+package shapes
+
+import extensions.sq
+import geometry.Rect
+import geometry.Vector2d
 import javafx.scene.CacheHint
 import javafx.scene.input.MouseEvent
 import javafx.scene.shape.Circle
 import kotlin.math.abs
 
-const val RADIUS = 28.0
-const val FRICTION = 0.98
-const val RESTITUTION = 0.4
-
-fun Double.sq() = this * this
 
 class Checker(var isOwn: Boolean = true, x: Double = 0.0, y: Double = 0.0) : Circle(RADIUS) {
     val pos = Vector2d(x, y)
@@ -79,5 +79,11 @@ class Checker(var isOwn: Boolean = true, x: Double = 0.0, y: Double = 0.0) : Cir
     fun syncPos() {
         centerX = pos.x
         centerY = pos.y
+    }
+
+    companion object {
+        const val RADIUS = 28.0
+        const val FRICTION = 0.98
+        const val RESTITUTION = 0.4
     }
 }
