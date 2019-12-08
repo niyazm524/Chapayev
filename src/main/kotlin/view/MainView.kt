@@ -6,7 +6,7 @@ import javafx.animation.AnimationTimer
 import javafx.scene.CacheHint
 import tornadofx.*
 
-class MainView : View("Hello TornadoFX") {
+class MainView : View("Шашки Чапаева") {
     override val root = pane {
         prefWidth = 800.0
         prefHeight = 600.0
