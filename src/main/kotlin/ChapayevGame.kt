@@ -2,11 +2,14 @@ import core.Game
 import events.CheckerEvent
 import geometry.Rect
 import javafx.scene.layout.Pane
+import net.GameClient
+import net.NetGame
 import shapes.Board
 import shapes.Checker
 import shapes.Checker.Companion.RADIUS
+import java.net.InetAddress
 
-class ChapayevGame(root: Pane) : Game {
+class ChapayevGame(root: Pane) : Game, NetGame {
     val width = root.prefWidth
     val height = root.prefHeight
     val collidingPairs = mutableListOf<Pair<Checker, Checker>>()
@@ -14,7 +17,7 @@ class ChapayevGame(root: Pane) : Game {
             width / 2 + SIZE / 2, height / 2 + SIZE / 2)
     private val checkers = mutableListOf<Checker>()
     private val board = Board(bounds)
-
+    private var netClient = GameClient(this, InetAddress.getByName("192.168.1.7"))
 
     init {
         val margin = (CELL - RADIUS * 2) / 2
@@ -32,10 +35,11 @@ class ChapayevGame(root: Pane) : Game {
         root.addEventHandler(CheckerEvent.ON_GONE, ::onCheckerGone)
         root.children.add(board)
         root.children.addAll(checkers)
+        netClient.start()
     }
 
     private fun onCheckerGone(event: CheckerEvent) {
-
+        netClient.login("niyaz")
 
     }
 
