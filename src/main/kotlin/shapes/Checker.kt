@@ -1,19 +1,23 @@
 package shapes
 
+import events.CheckerEvent
 import extensions.sq
 import geometry.Rect
 import geometry.Vector2d
 import javafx.scene.CacheHint
 import javafx.scene.input.MouseEvent
+import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
+import tornadofx.*
 import kotlin.math.abs
 
 
-class Checker(var isOwn: Boolean = true, x: Double = 0.0, y: Double = 0.0) : Circle(RADIUS) {
+class Checker(val id: Int, var isOwn: Boolean = true, x: Double = 0.0, y: Double = 0.0) : Circle(RADIUS) {
     val pos = Vector2d(x, y)
     val vel = Vector2d()
     val acc = Vector2d()
     val mass: Double = 10.0
+    var isFading = false
 
     init {
         if (isOwn) styleClass.add("own")
@@ -36,11 +40,18 @@ class Checker(var isOwn: Boolean = true, x: Double = 0.0, y: Double = 0.0) : Cir
         if (vel.y > 0.01) vel.y *= FRICTION
         else if (vel.y < 0.01) vel.y *= FRICTION
 
-        if (pos.x - RADIUS <= bounds.left || pos.x + RADIUS >= bounds.right) {
-            acc.x = -acc.x; vel.x = -vel.x * 0.9
-        }
-        if (pos.y - RADIUS <= bounds.top || pos.y + RADIUS >= bounds.bottom) {
-            acc.y = -acc.y; vel.y = -vel.y * 0.9
+        if (!isFading) {
+            if (pos.x <= bounds.left || pos.x >= bounds.right || pos.y <= bounds.top || pos.y >= bounds.bottom) {
+                fireEvent(CheckerEvent(CheckerEvent.ON_GONE))
+                timeline {
+                    keyframe(0.7.seconds) {
+                        keyvalue(fillProperty(), Color.TRANSPARENT)
+                        keyvalue(strokeProperty(), Color.TRANSPARENT)
+                        keyvalue(effectProperty(), null)
+                    }
+                }
+                isFading = true
+            }
         }
 
         if (vel.length() < 0.01) {
@@ -48,7 +59,7 @@ class Checker(var isOwn: Boolean = true, x: Double = 0.0, y: Double = 0.0) : Cir
         }
     }
 
-    infix fun collidesWith(target: Checker): Boolean =
+    infix fun collidesWith(target: Checker): Boolean = !isFading && !target.isFading &&
             abs((pos.x - target.pos.x).sq() + (pos.y - target.pos.y).sq()) <= (RADIUS * 2).sq()
 
     fun resolveCollisionWith(checker: Checker) {

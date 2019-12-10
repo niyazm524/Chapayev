@@ -8,6 +8,7 @@ class Styles : Stylesheet() {
     companion object {
         val own by cssclass()
         val mate by cssclass()
+        val invisible by cssclass()
     }
 
     init {

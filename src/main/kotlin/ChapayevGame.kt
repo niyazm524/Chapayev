@@ -1,4 +1,5 @@
 import core.Game
+import events.CheckerEvent
 import geometry.Rect
 import javafx.scene.layout.Pane
 import shapes.Board
@@ -17,18 +18,25 @@ class ChapayevGame(root: Pane) : Game {
 
     init {
         val margin = (CELL - RADIUS * 2) / 2
+        var lastId = 0
         for (x in 0..7) {
-            checkers.add(Checker(true,
+            checkers.add(Checker(++lastId, true,
                     bounds.left + x * CELL + margin + RADIUS,
                     bounds.bottom - margin - RADIUS
             ))
-            checkers.add(Checker(false,
+            checkers.add(Checker(++lastId, false,
                     bounds.left + x * CELL + margin + RADIUS,
                     bounds.top + margin + RADIUS
             ))
         }
+        root.addEventHandler(CheckerEvent.ON_GONE, ::onCheckerGone)
         root.children.add(board)
         root.children.addAll(checkers)
+    }
+
+    private fun onCheckerGone(event: CheckerEvent) {
+
+
     }
 
     override fun update(elapsedTime: Int) {
