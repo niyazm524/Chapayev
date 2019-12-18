@@ -25,8 +25,8 @@ class Checker(val id: Int, var isOwn: Boolean = true, x: Double = 0.0, y: Double
         isCache = true
         cacheHint = CacheHint.SPEED
         setOnMouseClicked { event: MouseEvent ->
-            vel.x = (pos.x - event.x) * 400
-            vel.y = (pos.y - event.y) * 400
+            vel.x = (pos.x - event.x) * 500
+            vel.y = (pos.y - event.y) * 500
         }
         syncPos()
     }

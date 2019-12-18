@@ -1,6 +1,6 @@
 package app
 
-import view.MainView
-import tornadofx.App
+import tornadofx.*
+import view.GameView
 
-class MyApp: App(MainView::class, Styles::class)
+class MyApp : App(GameView::class, Styles::class)

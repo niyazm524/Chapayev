@@ -9,6 +9,7 @@ class Styles : Stylesheet() {
         val own by cssclass()
         val mate by cssclass()
         val invisible by cssclass()
+        val title by cssclass()
     }
 
     init {
@@ -22,6 +23,10 @@ class Styles : Stylesheet() {
             fill = Color.DARKBLUE
             effect = InnerShadow(18.0, Color.WHITE)
             stroke = Color.GRAY
+        }
+
+        title {
+            fontSize = Dimension(18.0, Dimension.LinearUnits.pt)
         }
     }
 }
