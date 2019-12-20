@@ -1,9 +1,15 @@
 package app
 
+import ChapayevClient
 import tornadofx.*
-import view.GameView
+import view.MenuView
 
-class MyApp : App(GameView::class, Styles::class) {
+class MyApp : App(MenuView::class, Styles::class) {
+    override fun stop() {
+        super.stop()
+        ChapayevClient.recycle()
+    }
+
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {

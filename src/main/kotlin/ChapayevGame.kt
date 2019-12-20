@@ -1,13 +1,11 @@
 import core.Game
 import events.CheckerEvent
 import geometry.Rect
-import net.GameClient
 import net.NetGame
 import shapes.Checker
 import shapes.Checker.Companion.RADIUS
 import tornadofx.*
 import view.GamePane
-import java.net.InetAddress
 
 class ChapayevGame : Game, NetGame {
     var title: String by property()
@@ -17,7 +15,6 @@ class ChapayevGame : Game, NetGame {
             width / 2 + SIZE / 2, height / 2 + SIZE / 2)
     override val root = GamePane(bounds)
     private val checkers = mutableListOf<Checker>()
-    private var netClient = GameClient(this, InetAddress.getByName("192.168.1.7"))
 
     init {
         val margin = (CELL - RADIUS * 2) / 2
@@ -34,13 +31,13 @@ class ChapayevGame : Game, NetGame {
         }
         root.addEventHandler(CheckerEvent.ON_GONE, ::onCheckerGone)
         root.children.addAll(checkers)
-        netClient.start()
+        ChapayevClient.start()
     }
 
     private fun onCheckerGone(event: CheckerEvent) {
         val checker = event.target as Checker
         checker.fade()
-        netClient.login("niyaz")
+        ChapayevClient.login("niyaz")
         title = "Checker ${checker.id} is gone!"
     }
 
@@ -58,7 +55,7 @@ class ChapayevGame : Game, NetGame {
     }
 
     override fun recycle() {
-        netClient.recycle()
+        ChapayevClient.recycle()
     }
 
     companion object {

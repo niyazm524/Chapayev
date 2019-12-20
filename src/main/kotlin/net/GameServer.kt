@@ -7,7 +7,7 @@ fun main() {
     GameServer().start()
 }
 
-class GameServer : UdpWorker() {
+open class GameServer : UdpWorker() {
     override var socket = DatagramSocket(3443)
 
     override fun run() {

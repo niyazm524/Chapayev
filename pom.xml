@@ -10,10 +10,23 @@
     <packaging>jar</packaging>
 
     <properties>
-        <kotlin.version>1.3.20</kotlin.version>
-        <tornadofx.version>1.7.19</tornadofx.version>
+        <kotlin.version>1.3.41</kotlin.version>
+        <tornadofx.version>1.7.20-SNAPSHOT</tornadofx.version>
         <main.class>app.MyApp</main.class>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>snapshots-repo</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>

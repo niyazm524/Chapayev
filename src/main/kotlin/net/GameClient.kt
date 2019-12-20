@@ -6,10 +6,10 @@ import java.net.DatagramSocket
 import java.net.InetAddress
 import java.net.SocketException
 
-class GameClient(val game: NetGame, var ipAddress: InetAddress) : UdpWorker() {
+open class GameClient : UdpWorker() {
     override var socket = DatagramSocket()
-    val buffer = ByteArray(1024)
-
+    var address: InetAddress? = null
+    private val buffer = ByteArray(1024)
 
     override fun run() {
         while (!isInterrupted) {
@@ -28,7 +28,7 @@ class GameClient(val game: NetGame, var ipAddress: InetAddress) : UdpWorker() {
         }
     }
 
-    fun sendPacket(packet: NetPacket) = sendPacket(packet, ipAddress, 3443)
+    fun sendPacket(packet: NetPacket) = address?.let { sendPacket(packet, it, 3443) }
 
     fun login(username: String) {
         sendPacket(LoginPacket(username))

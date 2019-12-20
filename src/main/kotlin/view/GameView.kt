@@ -41,7 +41,6 @@ class GameView : View("Чиртеш") {
             }
         }
         runLater(1.seconds) {
-            //replaceWith<MenuView>()
             timer.start()
         }
     }
