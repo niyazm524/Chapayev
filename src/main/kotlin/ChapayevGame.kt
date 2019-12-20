@@ -1,13 +1,12 @@
 import core.Game
 import events.CheckerEvent
 import geometry.Rect
-import net.NetGame
 import shapes.Checker
 import shapes.Checker.Companion.RADIUS
 import tornadofx.*
 import view.GamePane
 
-class ChapayevGame : Game, NetGame {
+class ChapayevGame : Game {
     var title: String by property()
     private val width = SIZE + 60
     private val height = SIZE + 60
@@ -37,7 +36,6 @@ class ChapayevGame : Game, NetGame {
     private fun onCheckerGone(event: CheckerEvent) {
         val checker = event.target as Checker
         checker.fade()
-        ChapayevClient.login("niyaz")
         title = "Checker ${checker.id} is gone!"
     }
 

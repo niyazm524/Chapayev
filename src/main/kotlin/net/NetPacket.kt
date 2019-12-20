@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 
 enum class PacketType(val int: Int) {
-    Empty(0), Login(1);
+    Empty(0), Login(1), Logon(2);
 
     companion object {
         private val map = PacketType.values().associateBy(PacketType::int)
@@ -13,7 +13,8 @@ enum class PacketType(val int: Int) {
 }
 
 sealed class NetPacket(var type: PacketType) {
-    var id: Int = -1
+    var id: Int = 0
+    var replyingTo: Int = 0
     abstract fun DataOutputStream.writeToPacket()
 
     fun toBytes(): ByteArray {
@@ -21,12 +22,11 @@ sealed class NetPacket(var type: PacketType) {
         DataOutputStream(bytesStream).use { dataStream ->
             dataStream.writeInt(type.int)
             dataStream.writeInt(id)
+            dataStream.writeInt(replyingTo)
             dataStream.writeToPacket()
         }
         return bytesStream.toByteArray()
     }
-
-    companion object
 }
 
 class EmptyPacket : NetPacket(PacketType.Empty) {
@@ -34,10 +34,14 @@ class EmptyPacket : NetPacket(PacketType.Empty) {
 }
 
 class LoginPacket(var playerName: String = "unknown") : NetPacket(PacketType.Login) {
-
     override fun DataOutputStream.writeToPacket() {
         writeUTF(playerName)
     }
+}
 
+class LogonPacket(var success: Boolean) : NetPacket(PacketType.Logon) {
+    override fun DataOutputStream.writeToPacket() {
+        writeBoolean(success)
+    }
 }
 

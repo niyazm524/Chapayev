@@ -6,7 +6,7 @@ import java.net.DatagramSocket
 import java.net.InetAddress
 import java.net.SocketException
 
-open class GameClient : UdpWorker() {
+abstract class GameClient : UdpWorker() {
     override var socket = DatagramSocket()
     var address: InetAddress? = null
     private val buffer = ByteArray(1024)
@@ -14,12 +14,9 @@ open class GameClient : UdpWorker() {
     override fun run() {
         while (!isInterrupted) {
             try {
-                val p = DatagramPacket(buffer, buffer.size)
-                socket.receive(p)
-                val packet = PacketDecoder.fromBytes(p.data)
-                when (packet) {
-                    is LoginPacket -> println("login: ${packet.playerName}")
-                }
+                val datagramPacket = DatagramPacket(buffer, buffer.size)
+                socket.receive(datagramPacket)
+                onDatagramReceived(datagramPacket)
             } catch (e: SocketException) {
                 if (!isInterrupted) System.err.println("Client: ${e.message}")
             } catch (e: IOException) {
@@ -28,16 +25,9 @@ open class GameClient : UdpWorker() {
         }
     }
 
-    fun sendPacket(packet: NetPacket) = address?.let { sendPacket(packet, it, 3443) }
+    fun NetPacket.send() = address?.let { sendPacket(this, it, 3443) }
 
-    fun login(username: String) {
-        sendPacket(LoginPacket(username))
-    }
+    fun NetPacket.sendAwaiting(callback: PacketCallback) =
+            address?.let { sendAwaitingPacket(this, it, 3443, callback) }
 
-    fun recycle() {
-        interrupt()
-        socket.close()
-    }
 }
-
-interface NetGame
