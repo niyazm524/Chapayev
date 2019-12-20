@@ -1,6 +1,7 @@
 package view
 
 import ChapayevGame
+import core.Game
 import javafx.animation.AnimationTimer
 import javafx.geometry.Pos
 import javafx.scene.CacheHint
@@ -8,7 +9,7 @@ import javafx.scene.text.TextAlignment
 import tornadofx.*
 
 class GameView : View("Чиртеш") {
-    private val game: ChapayevGame = ChapayevGame()
+    private val game: Game = ChapayevGame()
     override val root = borderpane {
         top = stackpane {
             text {
@@ -35,7 +36,7 @@ class GameView : View("Чиртеш") {
                 if (lastTick == 0L) {
                     lastTick = now; return
                 }
-                game.update(16)
+                game.update((now - lastTick).toInt() / 1_000_000)
                 lastTick = now
             }
         }

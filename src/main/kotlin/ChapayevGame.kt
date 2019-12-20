@@ -11,11 +11,11 @@ import java.net.InetAddress
 
 class ChapayevGame : Game, NetGame {
     var title: String by property()
-    val root = GamePane()
-    private val width = root.prefWidth
-    private val height = root.prefHeight
+    private val width = SIZE + 60
+    private val height = SIZE + 60
     private val bounds = Rect(width / 2 - SIZE / 2, height / 2 - SIZE / 2,
             width / 2 + SIZE / 2, height / 2 + SIZE / 2)
+    override val root = GamePane(bounds)
     private val checkers = mutableListOf<Checker>()
     private var netClient = GameClient(this, InetAddress.getByName("192.168.1.7"))
 
@@ -39,6 +39,7 @@ class ChapayevGame : Game, NetGame {
 
     private fun onCheckerGone(event: CheckerEvent) {
         val checker = event.target as Checker
+        checker.fade()
         netClient.login("niyaz")
         title = "Checker ${checker.id} is gone!"
     }
@@ -51,12 +52,12 @@ class ChapayevGame : Game, NetGame {
                 }
 
         for (checker in checkers) {
-            checker.onUpdate(1.0, bounds)
+            checker.onUpdate(elapsedTime.toDouble(), bounds)
             checker.syncPos()
         }
     }
 
-    fun recycle() {
+    override fun recycle() {
         netClient.recycle()
     }
 
