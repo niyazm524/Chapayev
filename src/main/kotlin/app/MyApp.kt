@@ -1,7 +1,7 @@
 package app
 
 import ChapayevClient
-import net.GameServer
+import ru.itis.networking.GameServer
 import tornadofx.*
 import view.MenuView
 

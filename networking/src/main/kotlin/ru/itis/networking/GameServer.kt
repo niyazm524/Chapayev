@@ -1,13 +1,9 @@
-package net
+package ru.itis.networking
 
 import java.io.IOException
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.SocketException
-
-fun main() {
-    GameServer().start()
-}
 
 open class GameServer : UdpWorker() {
     override var socket = DatagramSocket(3443)

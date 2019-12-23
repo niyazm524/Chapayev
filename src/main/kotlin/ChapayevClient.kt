@@ -1,7 +1,7 @@
-import net.GameClient
-import net.LoginPacket
-import net.LogonPacket
-import net.NetPacket
+import ru.itis.networking.GameClient
+import ru.itis.networking.LoginPacket
+import ru.itis.networking.LogonPacket
+import ru.itis.networking.NetPacket
 
 object ChapayevClient : GameClient() {
     fun login(username: String, callback: (isSuccess: Boolean) -> Unit) = LoginPacket(username).sendAwaiting {

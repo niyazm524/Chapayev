@@ -1,4 +1,4 @@
-package net
+package ru.itis.networking
 
 import java.io.IOException
 import java.net.DatagramPacket

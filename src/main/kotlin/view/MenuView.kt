@@ -5,7 +5,7 @@ import javafx.scene.layout.Pane
 import tornadofx.*
 
 class MenuView : View("Chapayev: Menu") {
-    override val root: Pane by fxml("/view/MenuView.fxml")
+    override val root: Pane by fxml("view/MenuView.fxml")
 
     fun onPlayClicked() {
         ChapayevClient.login("neyaz") { isSuccess ->
