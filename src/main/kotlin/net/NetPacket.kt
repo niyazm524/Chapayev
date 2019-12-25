@@ -2,6 +2,7 @@ package net
 
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
+import java.net.InetAddress
 
 enum class PacketType(val int: Int) {
     Empty(0), Login(1), Logon(2);
@@ -15,6 +16,7 @@ enum class PacketType(val int: Int) {
 sealed class NetPacket(var type: PacketType) {
     var id: Int = 0
     var replyingTo: Int = 0
+    var source: Pair<InetAddress, Int>? = null
     abstract fun DataOutputStream.writeToPacket()
 
     fun toBytes(): ByteArray {

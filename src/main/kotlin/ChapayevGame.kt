@@ -1,36 +1,22 @@
 import core.Game
 import events.CheckerEvent
-import geometry.Rect
+import extensions.generateCheckers
 import shapes.Checker
-import shapes.Checker.Companion.RADIUS
 import tornadofx.*
 import view.GamePane
 
 class ChapayevGame : Game {
     var title: String by property()
-    private val width = SIZE + 60
-    private val height = SIZE + 60
-    private val bounds = Rect(width / 2 - SIZE / 2, height / 2 - SIZE / 2,
-            width / 2 + SIZE / 2, height / 2 + SIZE / 2)
-    override val root = GamePane(bounds)
-    private val checkers = mutableListOf<Checker>()
+    override val root = GamePane()
+    val bounds = root.bounds
+    private val checkers: Map<Int, Checker>
+    private val checkersArray: Array<Checker>
 
     init {
-        val margin = (CELL - RADIUS * 2) / 2
-        var lastId = 0
-        for (x in 0..7) {
-            checkers.add(Checker(++lastId, true,
-                    bounds.left + x * CELL + margin + RADIUS,
-                    bounds.bottom - margin - RADIUS
-            ))
-            checkers.add(Checker(++lastId, false,
-                    bounds.left + x * CELL + margin + RADIUS,
-                    bounds.top + margin + RADIUS
-            ))
-        }
+        checkers = generateCheckers(3 to 2)
+        checkersArray = checkers.values.toTypedArray()
         root.addEventHandler(CheckerEvent.ON_GONE, ::onCheckerGone)
-        root.children.addAll(checkers)
-        ChapayevClient.start()
+        root.children.addAll(checkers.values)
     }
 
     private fun onCheckerGone(event: CheckerEvent) {
@@ -40,20 +26,16 @@ class ChapayevGame : Game {
     }
 
     override fun update(elapsedTime: Int) {
-        for (i in 0 until checkers.size)
-            for (j in (i + 1) until checkers.size)
-                if (checkers[i] collidesWith checkers[j]) {
-                    checkers[i].resolveCollisionWith(checkers[j])
+        for (i in checkersArray.indices)
+            for (j in (i + 1) until checkersArray.size)
+                if (checkersArray[i] collidesWith checkersArray[j]) {
+                    checkersArray[i].resolveCollisionWith(checkersArray[j])
                 }
 
-        for (checker in checkers) {
+        for (checker in checkersArray) {
             checker.onUpdate(elapsedTime.toDouble(), bounds)
             checker.syncPos()
         }
-    }
-
-    override fun recycle() {
-        ChapayevClient.recycle()
     }
 
     companion object {

@@ -24,6 +24,7 @@ abstract class UdpWorker : Thread() {
 
     protected fun onDatagramReceived(datagramPacket: DatagramPacket) {
         val packet: NetPacket = PacketDecoder.fromBytes(datagramPacket.data)
+        packet.source = datagramPacket.address to datagramPacket.port
         var hasCallback = false
         awaitingPacketsCallbacks.remove(packet.replyingTo)?.also { callback ->
             hasCallback = true
@@ -34,8 +35,12 @@ abstract class UdpWorker : Thread() {
 
     abstract fun onPacket(packet: NetPacket, hasCallback: Boolean)
 
+    fun NetPacket.replyWith(netPacket: NetPacket) = this.source?.let { sendPacket(netPacket, it.first, it.second) }
+
     open fun recycle() {
         interrupt()
         socket.close()
     }
+
+
 }

@@ -5,12 +5,9 @@ import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.SocketException
 
-fun main() {
-    GameServer().start()
-}
 
-open class GameServer : UdpWorker() {
-    override var socket = DatagramSocket(3443)
+abstract class GameServer(port: Int = 3443) : UdpWorker() {
+    override var socket = DatagramSocket(port)
 
     override fun run() {
         while (!isInterrupted) {
@@ -25,9 +22,5 @@ open class GameServer : UdpWorker() {
                 e.printStackTrace(System.err)
             }
         }
-    }
-
-    override fun onPacket(packet: NetPacket, hasCallback: Boolean) {
-        print("Packet: ${packet.id}")
     }
 }

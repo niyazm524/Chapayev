@@ -1,29 +1,28 @@
 package app
 
 import ChapayevClient
-import net.GameServer
+import server.ChapayevServer
 import tornadofx.*
 import view.MenuView
 
 class MyApp : App(MenuView::class, Styles::class) {
-    lateinit var server: GameServer
 
     override fun stop() {
         super.stop()
         ChapayevClient.recycle()
-        server.recycle()
+        ChapayevServer.recycle()
     }
 
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
+            ChapayevClient.start()
+            ChapayevServer.start()
             launch<MyApp>(args)
         }
     }
 
     override fun init() {
         super.init()
-        server = GameServer()
-        server.start()
     }
 }
