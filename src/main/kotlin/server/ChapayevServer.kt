@@ -1,16 +1,16 @@
 package server
 
-import net.GameServer
-import net.LoginPacket
-import net.LogonPacket
-import net.NetPacket
+import core.Room
+import net.*
 
 object ChapayevServer : GameServer(port = 3443) {
+    val rooms = listOf(Room(1, "default"))
     val players = hashMapOf<String, Player>()
+
     override fun onPacket(packet: NetPacket, hasCallback: Boolean) {
-        print("packet: $packet")
         when (packet) {
             is LoginPacket -> onLogin(packet)
+            is RequestRoomsPacket -> packet.replyWith(RoomsPacket(rooms))
         }
     }
 

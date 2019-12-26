@@ -1,4 +1,5 @@
 import core.Game
+import events.CheckerClickEvent
 import events.CheckerEvent
 import extensions.generateCheckers
 import shapes.Checker
@@ -16,6 +17,7 @@ class ChapayevGame : Game {
         checkers = generateCheckers(3 to 2)
         checkersArray = checkers.values.toTypedArray()
         root.addEventHandler(CheckerEvent.ON_GONE, ::onCheckerGone)
+        root.addEventHandler(CheckerClickEvent.ON_CLICK, ::onCheckerClick)
         root.children.addAll(checkers.values)
     }
 
@@ -23,6 +25,12 @@ class ChapayevGame : Game {
         val checker = event.target as Checker
         checker.fade()
         title = "Checker ${checker.id} is gone!"
+    }
+
+    private fun onCheckerClick(event: CheckerClickEvent) {
+        val checker = event.target as Checker
+        checker.vel.x = event.x * Checker.FORCE
+        checker.vel.y = event.y * Checker.FORCE
     }
 
     override fun update(elapsedTime: Int) {

@@ -1,11 +1,17 @@
 package net
 
+import core.Room
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.net.InetAddress
 
-enum class PacketType(val int: Int) {
-    Empty(0), Login(1), Logon(2);
+var lastTypeId = 0
+
+enum class PacketType {
+    Empty, Login, Logon,
+    RequestRooms, Rooms;
+
+    val int: Int = lastTypeId++
 
     companion object {
         private val map = PacketType.values().associateBy(PacketType::int)
@@ -17,7 +23,7 @@ sealed class NetPacket(var type: PacketType) {
     var id: Int = 0
     var replyingTo: Int = 0
     var source: Pair<InetAddress, Int>? = null
-    abstract fun DataOutputStream.writeToPacket()
+    open fun DataOutputStream.writeToPacket() {}
 
     fun toBytes(): ByteArray {
         val bytesStream = ByteArrayOutputStream()
@@ -31,9 +37,7 @@ sealed class NetPacket(var type: PacketType) {
     }
 }
 
-class EmptyPacket : NetPacket(PacketType.Empty) {
-    override fun DataOutputStream.writeToPacket() {}
-}
+class EmptyPacket : NetPacket(PacketType.Empty)
 
 class LoginPacket(var playerName: String = "unknown") : NetPacket(PacketType.Login) {
     override fun DataOutputStream.writeToPacket() {
@@ -47,3 +51,15 @@ class LogonPacket(var success: Boolean) : NetPacket(PacketType.Logon) {
     }
 }
 
+class RequestRoomsPacket : NetPacket(PacketType.RequestRooms)
+
+class RoomsPacket(var rooms: List<Room>) : NetPacket(PacketType.Rooms) {
+    override fun DataOutputStream.writeToPacket() {
+        writeInt(rooms.size)
+        for (room in rooms) {
+            writeInt(room.id)
+            writeUTF(room.name)
+            writeInt(room.playersCount)
+        }
+    }
+}

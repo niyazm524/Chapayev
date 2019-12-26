@@ -9,6 +9,10 @@ import java.net.SocketException
 abstract class GameServer(port: Int = 3443) : UdpWorker() {
     override var socket = DatagramSocket(port)
 
+    init {
+        name = "server"
+    }
+
     override fun run() {
         while (!isInterrupted) {
             try {

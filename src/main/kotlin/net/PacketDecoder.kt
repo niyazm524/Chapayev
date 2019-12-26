@@ -1,5 +1,6 @@
 package net
 
+import core.Room
 import java.io.ByteArrayInputStream
 import java.io.DataInputStream
 
@@ -20,5 +21,14 @@ object PacketDecoder {
         PacketType.Empty -> EmptyPacket()
         PacketType.Login -> LoginPacket().apply { playerName = dataStream.readUTF() }
         PacketType.Logon -> LogonPacket(dataStream.readBoolean())
+        PacketType.RequestRooms -> RequestRoomsPacket()
+        PacketType.Rooms -> {
+            val count = dataStream.readInt()
+            val rooms = mutableListOf<Room>()
+            repeat(count) {
+                rooms.add(Room(dataStream.readInt(), dataStream.readUTF(), dataStream.readInt()))
+            }
+            RoomsPacket(rooms.toList())
+        }
     }
 }

@@ -1,5 +1,6 @@
 package shapes
 
+import events.CheckerClickEvent
 import events.CheckerEvent
 import extensions.sq
 import geometry.Rect
@@ -24,8 +25,7 @@ class Checker(val id: Int, var isOwn: Boolean = true, x: Double = 0.0, y: Double
         isCache = true
         cacheHint = CacheHint.SPEED
         setOnMouseClicked { event: MouseEvent ->
-            vel.x = (pos.x - event.x) * FORCE
-            vel.y = (pos.y - event.y) * FORCE
+            fireEvent(CheckerClickEvent(CheckerClickEvent.ON_CLICK, (pos.x - event.x), (pos.y - event.y)))
         }
         syncPos()
     }

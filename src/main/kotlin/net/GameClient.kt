@@ -11,6 +11,10 @@ abstract class GameClient : UdpWorker() {
     var address: InetAddress? = null
     private val buffer = ByteArray(1024)
 
+    init {
+        name = "client"
+    }
+
     override fun run() {
         while (!isInterrupted) {
             try {
