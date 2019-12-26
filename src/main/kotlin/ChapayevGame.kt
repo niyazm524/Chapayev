@@ -1,57 +1,47 @@
 import core.Game
+import events.CheckerClickEvent
 import events.CheckerEvent
-import geometry.Rect
-import javafx.scene.layout.Pane
-import net.GameClient
-import net.NetGame
-import shapes.Board
+import extensions.generateCheckers
 import shapes.Checker
-import shapes.Checker.Companion.RADIUS
-import java.net.InetAddress
+import tornadofx.*
+import view.GamePane
 
-class ChapayevGame(root: Pane) : Game, NetGame {
-    val width = root.prefWidth
-    val height = root.prefHeight
-    val collidingPairs = mutableListOf<Pair<Checker, Checker>>()
-    private val bounds = Rect(width / 2 - SIZE / 2, height / 2 - SIZE / 2,
-            width / 2 + SIZE / 2, height / 2 + SIZE / 2)
-    private val checkers = mutableListOf<Checker>()
-    private val board = Board(bounds)
-    private var netClient = GameClient(this, InetAddress.getByName("192.168.1.7"))
+class ChapayevGame : Game {
+    var title: String by property()
+    override val root = GamePane()
+    val bounds = root.bounds
+    private val checkers: Map<Int, Checker>
+    private val checkersArray: Array<Checker>
 
     init {
-        val margin = (CELL - RADIUS * 2) / 2
-        var lastId = 0
-        for (x in 0..7) {
-            checkers.add(Checker(++lastId, true,
-                    bounds.left + x * CELL + margin + RADIUS,
-                    bounds.bottom - margin - RADIUS
-            ))
-            checkers.add(Checker(++lastId, false,
-                    bounds.left + x * CELL + margin + RADIUS,
-                    bounds.top + margin + RADIUS
-            ))
-        }
+        checkers = generateCheckers(3 to 2)
+        checkersArray = checkers.values.toTypedArray()
         root.addEventHandler(CheckerEvent.ON_GONE, ::onCheckerGone)
-        root.children.add(board)
-        root.children.addAll(checkers)
-        netClient.start()
+        root.addEventHandler(CheckerClickEvent.ON_CLICK, ::onCheckerClick)
+        root.children.addAll(checkers.values)
     }
 
     private fun onCheckerGone(event: CheckerEvent) {
-        netClient.login("niyaz")
+        val checker = event.target as Checker
+        checker.fade()
+        title = "Checker ${checker.id} is gone!"
+    }
 
+    private fun onCheckerClick(event: CheckerClickEvent) {
+        val checker = event.target as Checker
+        checker.vel.x = event.x * Checker.FORCE
+        checker.vel.y = event.y * Checker.FORCE
     }
 
     override fun update(elapsedTime: Int) {
-        for (i in 0 until checkers.size)
-            for (j in (i + 1) until checkers.size)
-                if (checkers[i] collidesWith checkers[j]) {
-                    checkers[i].resolveCollisionWith(checkers[j])
+        for (i in checkersArray.indices)
+            for (j in (i + 1) until checkersArray.size)
+                if (checkersArray[i] collidesWith checkersArray[j]) {
+                    checkersArray[i].resolveCollisionWith(checkersArray[j])
                 }
 
-        for (checker in checkers) {
-            checker.onUpdate(1.0, bounds)
+        for (checker in checkersArray) {
+            checker.onUpdate(elapsedTime.toDouble(), bounds)
             checker.syncPos()
         }
     }
